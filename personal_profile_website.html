@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .profile-picture-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #4a90e2;
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.05);
+        }
+
+        .upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 2px 10px rgba(74, 144, 226, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #357abd;
+            transform: scale(1.1);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .name-title {
+            margin-bottom: 20px;
+        }
+
+        .name {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .title {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-content {
+            padding: 25px;
+        }
+
+        .edit-btn, .save-btn, .add-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover, .save-btn:hover, .add-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        .editable {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1em;
+            width: 100%;
+            min-height: 100px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .qualification-item, .accomplishment-item, .update-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a90e2;
+            transition: all 0.3s ease;
+        }
+
+        .qualification-item:hover, .accomplishment-item:hover, .update-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .item-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .item-description {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .add-form {
+            background: #e8f4f8;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            display: none;
+            border: 2px dashed #4a90e2;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .form-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .form-btn.primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .form-btn.secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .form-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .profile-header {
+                padding: 30px 20px;
+            }
+            
+            .name {
+                font-size: 2em;
+            }
+            
+            .section-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-picture-container">
+                <img id="profile-pic" class="profile-picture" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiByeD0iNzUiIGZpbGw9IiNmMGYwZjAiLz4KPHN2ZyB4PSI0NSIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjY2NjIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0QzE0IDUuMSAxMy4xIDYgMTIgNkMxMC45IDYgMTAgNS4xIDEwIDRDMTAgMi45IDEwLjkgMiAxMiAyWk0yMSAxOVYyMEgzVjE5QzMgMTYuODEgNS44MSAxNiA5IDE2SDE1QzE4LjE5IDE2IDIxIDE2LjgxIDIxIDE5WiIvPgo8L3N2Zz4KPC9zdmc+" alt="Profile Picture">
+                <button class="upload-btn" onclick="document.getElementById('file-input').click()">📷</button>
+                <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+            </div>
+            <div class="name-title">
+                <h1 class="name" contenteditable="true" id="profile-name">Your Name</h1>
+                <p class="title" contenteditable="true" id="profile-title">Your Professional Title</p>
+            </div>
+        </div>
+
+        <!-- Bio Section -->
+        <div class="section">
+            <div class="section-header">
+                <span>About Me</span>
+                <button class="edit-btn" onclick="toggleEdit('bio')">Edit</button>
+            </div>
+            <div class="section-content">
+                <div id="bio-display">
+                    <p>Welcome to my profile! Add your personal bio here to tell visitors about yourself, your background, interests, and what makes you unique.</p>
+                </div>
+                <textarea class="editable" id="bio-edit" style="display: none;">Welcome to my profile! Add your personal bio here to tell visitors about yourself, your background, interests, and what makes you unique.</textarea>
+            </div>
+        </div>
+
+        <!-- Qualifications Section -->
+        <div class="section">
+            <div class="section-header">
+                <span>Qualifications</span>
+                <button class="add-btn" onclick="toggleAddForm('qualifications')">Add New</button>
+            </div>
+            <div class="section-content">
+                <div id="qualifications-list">
+                    <!-- Sample qualification -->
+                    <div class="qualification-item">
+                        <div class="item-header">
+                            <div class="item-title">Bachelor's Degree in Computer Science</div>
+                            <div>
+                                <span class="item-date">2020</span>
+                                <button class="delete-btn" onclick="deleteItem(this)">×</button>
+                            </div>
+                        </div>
+                        <div class="item-description">University of Technology</div>
+                    </div>
+                </div>
+                <div class="add-form" id="qualifications-form">
+                    <div class="form-group">
+                        <label>Title:</label>
+                        <input type="text" id="qual-title" placeholder="e.g., Master's Degree in Business">
+                    </div>
+                    <div class="form-group">
+                        <label>Institution/Organization:</label>
+                        <input type="text" id="qual-org" placeholder="e.g., Harvard Business School">
+                    </div>
+                    <div class="form-group">
+                        <label>Year:</label>
+                        <input type="text" id="qual-year" placeholder="e.g., 2022">
+                    </div>
+                    <div class="form-buttons">
+                        <button class="form-btn secondary" onclick="toggleAddForm('qualifications')">Cancel</button>
+                        <button class="form-btn primary" onclick="addQualification()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accomplishments Section -->
+        <div class="section">
+            <div class="section-header">
+                <span>Accomplishments</span>
+                <button class="add-btn" onclick="toggleAddForm('accomplishments')">Add New</button>
+            </div>
+            <div class="section-content">
+                <div id="accomplishments-list">
+                    <!-- Sample accomplishment -->
+                    <div class="accomplishment-item">
+                        <div class="item-header">
+                            <div class="item-title">Employee of the Year</div>
+                            <div>
+                                <span class="item-date">2023</span>
+                                <button class="delete-btn" onclick="deleteItem(this)">×</button>
+                            </div>
+                        </div>
+                        <div class="item-description">Recognized for outstanding performance and leadership in project management.</div>
+                    </div>
+                </div>
+                <div class="add-form" id="accomplishments-form">
+                    <div class="form-group">
+                        <label>Title:</label>
+                        <input type="text" id="acc-title" placeholder="e.g., Published Research Paper">
+                    </div>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <textarea id="acc-desc" placeholder="Brief description of the accomplishment..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Year:</label>
+                        <input type="text" id="acc-year" placeholder="e.g., 2023">
+                    </div>
+                    <div class="form-buttons">
+                        <button class="form-btn secondary" onclick="toggleAddForm('accomplishments')">Cancel</button>
+                        <button class="form-btn primary" onclick="addAccomplishment()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Updates Section -->
+        <div class="section">
+            <div class="section-header">
+                <span>Recent Updates</span>
+                <button class="add-btn" onclick="toggleAddForm('updates')">Add New</button>
+            </div>
+            <div class="section-content">
+                <div id="updates-list">
+                    <!-- Sample update -->
+                    <div class="update-item">
+                        <div class="item-header">
+                            <div class="item-title">Started New Position</div>
+                            <div>
+                                <span class="item-date">Sep 2025</span>
+                                <button class="delete-btn" onclick="deleteItem(this)">×</button>
+                            </div>
+                        </div>
+                        <div class="item-description">Excited to announce that I've joined Tech Innovations Inc. as a Senior Developer!</div>
+                    </div>
+                </div>
+                <div class="add-form" id="updates-form">
+                    <div class="form-group">
+                        <label>Title:</label>
+                        <input type="text" id="update-title" placeholder="e.g., Completed Certification">
+                    </div>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <textarea id="update-desc" placeholder="What's new or what you'd like to share..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Date:</label>
+                        <input type="text" id="update-date" placeholder="e.g., Sep 2025">
+                    </div>
+                    <div class="form-buttons">
+                        <button class="form-btn secondary" onclick="toggleAddForm('updates')">Cancel</button>
+                        <button class="form-btn primary" onclick="addUpdate()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Profile data storage
+        let profileData = {
+            name: "Your Name",
+            title: "Your Professional Title",
+            bio: "Welcome to my profile! Add your personal bio here to tell visitors about yourself, your background, interests, and what makes you unique.",
+            qualifications: [],
+            accomplishments: [],
+            updates: []
+        };
+
+        // Handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-pic').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Toggle edit mode for bio
+        function toggleEdit(section) {
+            const display = document.getElementById(section + '-display');
+            const edit = document.getElementById(section + '-edit');
+            const btn = event.target;
+
+            if (edit.style.display === 'none') {
+                display.style.display = 'none';
+                edit.style.display = 'block';
+                edit.value = display.textContent;
+                btn.textContent = 'Save';
+                btn.classList.remove('edit-btn');
+                btn.classList.add('save-btn');
+            } else {
+                display.style.display = 'block';
+                edit.style.display = 'none';
+                display.innerHTML = '<p>' + edit.value.replace(/\n/g, '</p><p>') + '</p>';
+                btn.textContent = 'Edit';
+                btn.classList.remove('save-btn');
+                btn.classList.add('edit-btn');
+                profileData.bio = edit.value;
+            }
+        }
+
+        // Toggle add forms
+        function toggleAddForm(section) {
+            const form = document.getElementById(section + '-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            
+            // Clear form inputs
+            if (form.style.display === 'none') {
+                const inputs = form.querySelectorAll('input, textarea');
+                inputs.forEach(input => input.value = '');
+            }
+        }
+
+        // Add qualification
+        function addQualification() {
+            const title = document.getElementById('qual-title').value;
+            const org = document.getElementById('qual-org').value;
+            const year = document.getElementById('qual-year').value;
+
+            if (!title || !org || !year) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const qualItem = document.createElement('div');
+            qualItem.className = 'qualification-item';
+            qualItem.innerHTML = `
+                <div class="item-header">
+                    <div class="item-title">${title}</div>
+                    <div>
+                        <span class="item-date">${year}</span>
+                        <button class="delete-btn" onclick="deleteItem(this)">×</button>
+                    </div>
+                </div>
+                <div class="item-description">${org}</div>
+            `;
+
+            document.getElementById('qualifications-list').appendChild(qualItem);
+            toggleAddForm('qualifications');
+        }
+
+        // Add accomplishment
+        function addAccomplishment() {
+            const title = document.getElementById('acc-title').value;
+            const desc = document.getElementById('acc-desc').value;
+            const year = document.getElementById('acc-year').value;
+
+            if (!title || !desc || !year) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const accItem = document.createElement('div');
+            accItem.className = 'accomplishment-item';
+            accItem.innerHTML = `
+                <div class="item-header">
+                    <div class="item-title">${title}</div>
+                    <div>
+                        <span class="item-date">${year}</span>
+                        <button class="delete-btn" onclick="deleteItem(this)">×</button>
+                    </div>
+                </div>
+                <div class="item-description">${desc}</div>
+            `;
+
+            document.getElementById('accomplishments-list').appendChild(accItem);
+            toggleAddForm('accomplishments');
+        }
+
+        // Add update
+        function addUpdate() {
+            const title = document.getElementById('update-title').value;
+            const desc = document.getElementById('update-desc').value;
+            const date = document.getElementById('update-date').value;
+
+            if (!title || !desc || !date) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const updateItem = document.createElement('div');
+            updateItem.className = 'update-item';
+            updateItem.innerHTML = `
+                <div class="item-header">
+                    <div class="item-title">${title}</div>
+                    <div>
+                        <span class="item-date">${date}</span>
+                        <button class="delete-btn" onclick="deleteItem(this)">×</button>
+                    </div>
+                </div>
+                <div class="item-description">${desc}</div>
+            `;
+
+            document.getElementById('updates-list').prepend(updateItem);
+            toggleAddForm('updates');
+        }
+
+        // Delete item
+        function deleteItem(btn) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                btn.closest('.qualification-item, .accomplishment-item, .update-item').remove();
+            }
+        }
+
+        // Save data when name/title is edited
+        document.getElementById('profile-name').addEventListener('blur', function() {
+            profileData.name = this.textContent;
+        });
+
+        document.getElementById('profile-title').addEventListener('blur', function() {
+            profileData.title = this.textContent;
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date for updates
+            const currentDate = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short' 
+            });
+            
+            // Focus on name field initially and select all text
+            setTimeout(() => {
+                const nameElement = document.getElementById('profile-name');
+                nameElement.focus();
+                
+                // Select all text in contenteditable element
+                const range = document.createRange();
+                range.selectNodeContents(nameElement);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
